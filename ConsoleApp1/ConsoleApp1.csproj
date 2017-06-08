@@ -48,6 +48,7 @@
     <Compile Include="DataObjectResult.cs" />
     <Compile Include="Dictionary.cs" />
     <Compile Include="JSONParser.cs" />
+    <Compile Include="ObjectProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

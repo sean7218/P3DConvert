@@ -41,8 +41,13 @@ namespace ConsoleApp1
 			CreateTextFileFromStringList(fileToWrite);
 		}
 
-		//
+		//Adding a function that can search for a key and then return the positions within
+		//the list of objects
+		public static void searchKeyFromObjectList(string searchKey, List<Object> objectList)
+		{
 
+
+		}
 
 		// Write object into a text file
 		public static List<string> SerializeObjectListToStringList (List<Object> objectList)

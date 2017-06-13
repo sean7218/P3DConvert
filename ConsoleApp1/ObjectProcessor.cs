@@ -17,18 +17,12 @@ namespace ConsoleApp1
 			this.Contents = contents;
 		}
 
-		static public void getListFromKey(string searchkey)
+		static public void GetListFromKey(string searchkey)
 		{
 
 
 		}
 
-		static public List<Object> DeleteObjectsFromList(List<Object> objectDelete)
-		{
-			List<Object> outputList = new List<Object>;
 
-			return outputList
-
-		}
 	}
 }

@@ -15,10 +15,9 @@ namespace ConsoleApp1
 			string currentDirectory = Directory.GetCurrentDirectory();
 			DirectoryInfo directory = new DirectoryInfo(currentDirectory);
 			var fileName = Path.Combine(directory.FullName, "P3D.txt");
-			var fileContents = ReadTextResults(fileName);
+			var fileContents = ReadTextFileToLines(fileName);
 
 			List<Object> parsedData = ProcessTwoLines(fileContents);
-
 			string output = JsonConvert.SerializeObject(parsedData, Formatting.Indented);
 
 			using (StreamWriter file = File.CreateText(@"C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\output.json"))
@@ -27,73 +26,109 @@ namespace ConsoleApp1
 				serializer.Serialize(file, output);
 
 			}
-			string[] text1 = { "Key" };
-			string[] text2 = { "Key", "value1"};
-			string[] text3 = { "Key", "Coordine", "300", "400", "500"};
-			string[] text4 = { "Key", "" };
-
-			string[] res1 = CombinedSplitedLineTailStrings(text1);
-			string[] res2 = CombinedSplitedLineTailStrings(text2);
-			string[] res3 = CombinedSplitedLineTailStrings(text3);
-			string[] res4 = CombinedSplitedLineTailStrings(text4);
 
 			var fileToWrite = SerializeObjectListToStringList(parsedData);
 			CreateTextFileFromStringList(fileToWrite);
 		}
 
-		//Adding a function that can search for a key and then return the positions within
-		//the list of objects
-		public static void searchKeyFromObjectList(string searchKey, List<Object> objectList)
+
+
+
+
+
+		public static List<string> ProcessOneLine(string line)
 		{
+			List<string> processedLine = new List<string>();
+
+			var twospaces = "  ";
+			var fourSpaces = "    ";
+			var eightSpaces = "        ";
+
+			var first2Spaces = -1;
+			var first4Spaces = -1;
+			var first8Spaces = -1;
+			var second2Spaces = -1;
+			var second4Spaces = -1;
+			var second8Spaces = -1;
+			var third2Spaces = -1;
+			var fourth2Spaces = -1;
 
 
-		}
+			first2Spaces = line.IndexOf(twospaces);
+			first4Spaces = line.IndexOf(fourSpaces);
+			first8Spaces = line.IndexOf(eightSpaces);
 
-		// Write object into a text file
-		public static List<string> SerializeObjectListToStringList (List<Object> objectList)
-		{
-			List<string> stringList = new List<string>();
-			var line = "";
-
-			for (int i = 0; i < objectList.Count; i++)
+			if (first2Spaces >= 0)
 			{
-				if (objectList[i] is DataTypeA)
-				{
-					var dataA = (DataTypeA)objectList[i];
-					line = dataA.keyA + " " + dataA.valueA;
-					stringList.Add(line);
-				}
-				else if (objectList[i] is DataTypeB)
-				{
-					var dataB = (DataTypeB)objectList[i];
-					line = dataB.keyB;
-					foreach (var dataA in dataB.valueB)
-					{
-						stringList.Add("    " + dataA.keyA +"  " + dataA.valueA);
-					}
-
-				}
+				second2Spaces = line.IndexOf(twospaces, first2Spaces + 2);
+			}
+			else if (first4Spaces >= 0)
+			{
+				second2Spaces = line.IndexOf(twospaces, first2Spaces + 4);
+			}
+			else if (first8Spaces >= 0)
+			{
+				second2Spaces = line.IndexOf(twospaces, first2Spaces + 8);
+			}
+			else
+			{
+				second2Spaces = -1;
 			}
 
-			return stringList;
-
-		}
-
-		// write a list<string> into a text file
-		public static void CreateTextFileFromStringList(List<string> stringList) {
-
-			var filePath = @"C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\textfileOutput.txt";
-			using (var writer = new StreamWriter(filePath))
+			if (first2Spaces >= 0)
 			{
-
-				 writer.WriteLine("This is just a string writing to a text file");
-				foreach (var line in stringList)
-				{
-					writer.WriteLine(line);
-				}
+				second4Spaces = line.IndexOf(twospaces, first2Spaces + 2);
+			}
+			else if (first4Spaces >= 0)
+			{
+				second4Spaces = line.IndexOf(twospaces, first2Spaces + 4);
+			}
+			else if (first8Spaces >= 0)
+			{
+				second4Spaces = line.IndexOf(twospaces, first2Spaces + 8);
+			}
+			else
+			{
+				second4Spaces = -1;
 			}
 
+
+			if (first2Spaces >= 0)
+			{
+				second8Spaces = line.IndexOf(twospaces, first2Spaces + 2);
+			}
+			else if (first4Spaces >= 0)
+			{
+				second8Spaces = line.IndexOf(twospaces, first2Spaces + 4);
+			}
+			else if (first8Spaces >= 0)
+			{
+				second8Spaces = line.IndexOf(twospaces, first2Spaces + 8);
+			}
+			else
+			{
+				second8Spaces = -1;
+			}
+
+
+
+
+			return processedLine;
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		// processing the list of strings with two lines at a time while using the
 		// checkFormatting function to see how to arrange the actual dictionaries
 		public static List<Object> ProcessTwoLines(List<string> contents)
@@ -102,7 +137,7 @@ namespace ConsoleApp1
 			var line1 = "";
 			var line2 = "";
 
-			List<Object> DataContainer = new List<Object>();
+			List<Object> DataContainer = new List<Object>(); //maybe start with StringValuePair<string, object>
 			int startLineIndex = 0;
 			int endLineIndex = 0;
 			
@@ -110,20 +145,15 @@ namespace ConsoleApp1
 			{
 				line1 = contents[i];
 				line2 = contents[i + 1];
-				formatInfo = checkFormatting(line1, line2);
-				// if line1 doesn't have white space then
-				// if line 2 doesn't have white space?   do nothing but add keyvalue pair 
-				// if line 2 has white space?            add key value pair but value to be a array or list : nothing
-				// if line1 has fwhite space then
-				// if line2 doesn't have white space?    add another key,value pair 
-				// if line2 has white space?             add another key,value pair under line1 value
-
+				formatInfo = CheckFormatting(line1, line2);
+				var processedLine = ProcessOneLine(line1);
 				// Line1 and Line2 has no space in front
 				if (formatInfo[0] == false && formatInfo[1] == false)
 				{
+					
 					var splitedLine = ParseLineFromResults(line1);
 					splitedLine = CombinedSplitedLineTailStrings(splitedLine);
-					var dataA = new DataTypeA() { id = 1, keyA = splitedLine[0], valueA = (splitedLine.Length > 1) ? splitedLine[1] : "" };
+					var dataA = new DataTypeA() { Id = 1, KeyA = splitedLine[0], ValueA = (splitedLine.Length > 1) ? splitedLine[1] : "" };
 					DataContainer.Add(dataA);
 				}
 				// Line1 has no space in front but line2 has space in front
@@ -142,7 +172,7 @@ namespace ConsoleApp1
 							break;
 						}
 
-						formatInfo = checkFormatting(contents[j], contents[j+1]);
+						formatInfo = CheckFormatting(contents[j], contents[j+1]);
 						if (formatInfo[0] == true && formatInfo[1] == false)
 						{
 							startLineIndex = i;
@@ -155,19 +185,19 @@ namespace ConsoleApp1
 					// count the number of lines and and convert each line to valueA
 					var splitedLine = ParseLineFromResults(contents[startLineIndex]);
 					splitedLine = CombinedSplitedLineTailStrings(splitedLine);
-					objectB.keyB = splitedLine[0] + " " + splitedLine[1];
+					objectB.KeyB = splitedLine[0] + " " + splitedLine[1];
 					List<DataTypeA> listOfOjbectA = new List<DataTypeA>();
 					for (int g = startLineIndex + 1; g <= endLineIndex; g++)
 					{
 						splitedLine = ParseLineFromResults(contents[g]);
 						splitedLine = CombinedSplitedLineTailStrings(splitedLine);
-						DataTypeA objectA = new DataTypeA() { keyA = splitedLine[0], valueA = (splitedLine.Length > 1) ? splitedLine[1] : "" };
+						DataTypeA objectA = new DataTypeA() { KeyA = splitedLine[0], ValueA = (splitedLine.Length > 1) ? splitedLine[1] : "" };
 						listOfOjbectA.Add(objectA);
 					}
 
 					//then added to valueB which is a list of dataA
 					//then actually asigned into the dataContainer
-					objectB.valueB = listOfOjbectA;
+					objectB.ValueB = listOfOjbectA;
 					DataContainer.Add(objectB);
 					
 
@@ -182,7 +212,7 @@ namespace ConsoleApp1
 		// Checking two lines at a time
 		// See if line1 begin with no space, and line2 begin with space
 		// return true if space is found, false if space not found
-		public static bool[] checkFormatting(string line1, string line2)
+		public static bool[] CheckFormatting(string line1, string line2)
 		{
 			bool[] formatInfo = new bool[2];
 
@@ -224,7 +254,7 @@ namespace ConsoleApp1
 		// Reading one line at a time from the text file and 
 		// converting them into a list of strings (one line per element) with strings
 		// preserved
-		public static List<String> ReadTextResults(string fileName)
+		public static List<String> ReadTextFileToLines(string fileName)
 		{
 
 			
@@ -324,5 +354,52 @@ namespace ConsoleApp1
 			output[1] = combinedString;
 			return output;
 		}
+
+		// Write object into a text file
+		public static List<string> SerializeObjectListToStringList(List<Object> objectList)
+		{
+			List<string> stringList = new List<string>();
+			var line = "";
+
+			for (int i = 0; i < objectList.Count; i++)
+			{
+				if (objectList[i] is DataTypeA dataA)
+				{
+					line = dataA.KeyA + " " + dataA.ValueA;
+					stringList.Add(line);
+				}
+				else if (objectList[i] is DataTypeB dataB)
+				{
+					line = dataB.KeyB;
+					foreach (var datA in dataB.ValueB)
+					{
+						stringList.Add("    " + datA.KeyA + "  " + datA.ValueA);
+					}
+
+				}
+			}
+
+			return stringList;
+
+		}
+
+		// write a list<string> into a text file
+		public static void CreateTextFileFromStringList(List<string> stringList)
+		{
+
+			var filePath = @"C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\textfileOutput.txt";
+			using (var writer = new StreamWriter(filePath))
+			{
+
+				writer.WriteLine("This is just a string writing to a text file");
+				foreach (var line in stringList)
+				{
+					writer.WriteLine(line);
+				}
+			}
+
+		}
+
+
 	}
 }

@@ -1,0 +1,24 @@
+ATTRIBUTES
+Attribute1 P3dLineGroup.Service
+Attribute2 P3dLineGroup.NominalSpec
+Attribute3 P3dLineGroup.InsulationSpec
+Attribute4 P3dLineGroup.InsulationThickness
+Attribute5 Drawing.Unit
+Attribute6 General.Project_Number
+Attribute7 P3dLineGroup.LineNumber
+Attribute8 General.Project_Description
+Attribute9 General.Project_Name
+
+BOM-ATTRIBUTES
+PipeRunComponent.DesignPressure
+PipeRunComponent.DesignTemperature
+EngineeringItems.Material
+EngineeringItems.WallThickness
+PipeRunComponent.InsulationThickness
+PipeRunComponent.InsulationType
+EngineeringItems.Weight
+
+
+
+
+

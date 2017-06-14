@@ -1,0 +1,9 @@
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\bin\Release\Data.txt
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\bin\Release\P3D.txt
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\bin\Release\ConsoleApp1.exe.config
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\bin\Release\ConsoleApp1.exe
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\bin\Release\ConsoleApp1.pdb
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\bin\Release\Newtonsoft.Json.dll
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\bin\Release\Newtonsoft.Json.xml
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\obj\Release\ConsoleApp1.exe
+C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\obj\Release\ConsoleApp1.pdb

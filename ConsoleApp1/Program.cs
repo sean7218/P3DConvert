@@ -14,15 +14,18 @@ namespace ConsoleApp1
 		{
 			string currentDirectory = Directory.GetCurrentDirectory();
 			DirectoryInfo directory = new DirectoryInfo(currentDirectory);
-			var fileName = Path.Combine(directory.FullName, "P3D.txt");
+			string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+			var fileName = Path.Combine(baseDir, "HHSX245.pcf");
 			var fileContents = ReadTextFileToLines(fileName);
 
 			List<Object> parsedData = ProcessTwoLines(fileContents);
-			string output = JsonConvert.SerializeObject(parsedData, Formatting.Indented);
-
+			
+			string output = JsonConvert.SerializeObject(parsedData);
+			
 			using (StreamWriter file = File.CreateText(@"C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\output.json"))
 			{
 				JsonSerializer serializer = new JsonSerializer();
+				
 				serializer.Serialize(file, output);
 
 			}
@@ -30,95 +33,6 @@ namespace ConsoleApp1
 			var fileToWrite = SerializeObjectListToStringList(parsedData);
 			CreateTextFileFromStringList(fileToWrite);
 		}
-
-
-
-
-
-
-		public static List<string> ProcessOneLine(string line)
-		{
-			List<string> processedLine = new List<string>();
-
-			var twospaces = "  ";
-			var fourSpaces = "    ";
-			var eightSpaces = "        ";
-
-			var first2Spaces = -1;
-			var first4Spaces = -1;
-			var first8Spaces = -1;
-			var second2Spaces = -1;
-			var second4Spaces = -1;
-			var second8Spaces = -1;
-			var third2Spaces = -1;
-			var fourth2Spaces = -1;
-
-
-			first2Spaces = line.IndexOf(twospaces);
-			first4Spaces = line.IndexOf(fourSpaces);
-			first8Spaces = line.IndexOf(eightSpaces);
-
-			if (first2Spaces >= 0)
-			{
-				second2Spaces = line.IndexOf(twospaces, first2Spaces + 2);
-			}
-			else if (first4Spaces >= 0)
-			{
-				second2Spaces = line.IndexOf(twospaces, first2Spaces + 4);
-			}
-			else if (first8Spaces >= 0)
-			{
-				second2Spaces = line.IndexOf(twospaces, first2Spaces + 8);
-			}
-			else
-			{
-				second2Spaces = -1;
-			}
-
-			if (first2Spaces >= 0)
-			{
-				second4Spaces = line.IndexOf(twospaces, first2Spaces + 2);
-			}
-			else if (first4Spaces >= 0)
-			{
-				second4Spaces = line.IndexOf(twospaces, first2Spaces + 4);
-			}
-			else if (first8Spaces >= 0)
-			{
-				second4Spaces = line.IndexOf(twospaces, first2Spaces + 8);
-			}
-			else
-			{
-				second4Spaces = -1;
-			}
-
-
-			if (first2Spaces >= 0)
-			{
-				second8Spaces = line.IndexOf(twospaces, first2Spaces + 2);
-			}
-			else if (first4Spaces >= 0)
-			{
-				second8Spaces = line.IndexOf(twospaces, first2Spaces + 4);
-			}
-			else if (first8Spaces >= 0)
-			{
-				second8Spaces = line.IndexOf(twospaces, first2Spaces + 8);
-			}
-			else
-			{
-				second8Spaces = -1;
-			}
-
-
-
-
-			return processedLine;
-		}
-
-
-
-
 
 
 
@@ -146,14 +60,14 @@ namespace ConsoleApp1
 				line1 = contents[i];
 				line2 = contents[i + 1];
 				formatInfo = CheckFormatting(line1, line2);
-				var processedLine = ProcessOneLine(line1);
+
 				// Line1 and Line2 has no space in front
 				if (formatInfo[0] == false && formatInfo[1] == false)
 				{
 					
 					var splitedLine = ParseLineFromResults(line1);
 					splitedLine = CombinedSplitedLineTailStrings(splitedLine);
-					var dataA = new DataTypeA() { Id = 1, KeyA = splitedLine[0], ValueA = (splitedLine.Length > 1) ? splitedLine[1] : "" };
+					var dataA = new DataTypeA() { KeyA = splitedLine[0], ValueA = (splitedLine.Length > 1) ? splitedLine[1] : "" };
 					DataContainer.Add(dataA);
 				}
 				// Line1 has no space in front but line2 has space in front
@@ -185,7 +99,15 @@ namespace ConsoleApp1
 					// count the number of lines and and convert each line to valueA
 					var splitedLine = ParseLineFromResults(contents[startLineIndex]);
 					splitedLine = CombinedSplitedLineTailStrings(splitedLine);
-					objectB.KeyB = splitedLine[0] + " " + splitedLine[1];
+
+					if (splitedLine.Length > 1)
+					{
+						objectB.KeyB = (splitedLine[1] == "") ? splitedLine[0] : splitedLine[0] + "  " + splitedLine[1];
+					}
+					else
+					{
+						objectB.KeyB = splitedLine[0];
+					}
 					List<DataTypeA> listOfOjbectA = new List<DataTypeA>();
 					for (int g = startLineIndex + 1; g <= endLineIndex; g++)
 					{
@@ -277,10 +199,11 @@ namespace ConsoleApp1
 		// into a array of strings. 
 		public static string[] ParseLineFromResults(string line)
 		{
-				Console.WriteLine("splitting one line into a list of strings seperated by space");
+				
 				line.TrimEnd();
 				line.TrimStart();
-				var splitedLine = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				var splitedLine = line.Split(new string [] { "  " }, StringSplitOptions.RemoveEmptyEntries);
+				
 				return splitedLine;
 		}
 
@@ -323,7 +246,7 @@ namespace ConsoleApp1
 			}
 			else
 			{
-				Console.WriteLine("ERROR HAS OCCURRED THAT LINE HAS NOT VALUE AT ALL!");
+			
 			}
 
 
@@ -345,7 +268,9 @@ namespace ConsoleApp1
 					}
 					else
 					{
-						combinedString = combinedString + "," + splitedLine[i];
+						var spaces = (splitedLine[0].Contains("END-POINT") || splitedLine[0].Contains("CO-RDS"))? "    ": "  ";
+					
+						combinedString = combinedString + spaces + splitedLine[i];
 					}
 				}
 			}
@@ -365,15 +290,26 @@ namespace ConsoleApp1
 			{
 				if (objectList[i] is DataTypeA dataA)
 				{
-					line = dataA.KeyA + " " + dataA.ValueA;
+					line = dataA.KeyA + "  " + dataA.ValueA;
 					stringList.Add(line);
 				}
 				else if (objectList[i] is DataTypeB dataB)
 				{
 					line = dataB.KeyB;
+					stringList.Add(line);
+
+					dataB = ModifyComponentAttributes(dataB);
 					foreach (var datA in dataB.ValueB)
 					{
-						stringList.Add("    " + datA.KeyA + "  " + datA.ValueA);
+						if (datA.KeyA == "CO-ORDS" || datA.KeyA == "END-POINT")
+						{
+							stringList.Add("    " + datA.KeyA + "        " + datA.ValueA);
+						}
+						else
+						{
+							stringList.Add("    " + datA.KeyA + "  " + datA.ValueA);
+						}
+						
 					}
 
 				}
@@ -383,15 +319,154 @@ namespace ConsoleApp1
 
 		}
 
+		public static DataTypeB ModifyComponentAttributes(DataTypeB dataB) {
+
+			var DesignPressure = "";
+			var DesignTemperature = "";
+			var Material = "";
+			var WallThickness = "";
+
+			DesignTemperature = GetDesignTemperature(dataB);
+			DesignPressure = GetDesignPressure(dataB);
+			Material = GetMaterial(dataB);
+			WallThickness = GetWallThickness(dataB);
+
+			DataTypeB newDataB = new DataTypeB();
+			newDataB.KeyB = dataB.KeyB;
+
+			for (int i = 0; i < dataB.ValueB.Count; i++)
+			{
+				if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE1"))
+				{
+					dataB.ValueB[i].ValueA = DesignTemperature;
+				}
+				else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE2"))
+				{
+					dataB.ValueB[i].ValueA = DesignPressure;
+				}
+				else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE3"))
+				{
+					dataB.ValueB[i].ValueA = Material;
+				} else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE4"))
+				{
+						dataB.ValueB[i].ValueA = WallThickness;
+				}
+				else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE5"))
+				{
+					dataB.ValueB[i].ValueA = "";
+				}
+				else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE6"))
+				{
+					dataB.ValueB[i].ValueA = "";
+				}
+				else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE7"))
+				{
+					dataB.ValueB[i].ValueA = "";
+				}
+				else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE8"))
+				{
+					dataB.ValueB[i].ValueA = "";
+				}
+				else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE9"))
+				{
+					dataB.ValueB[i].ValueA = "";
+				}
+				else if (dataB.ValueB[i].KeyA.Contains("COMPONENT-ATTRIBUTE10"))
+				{
+					dataB.ValueB[i].ValueA = "";
+				}
+			}
+			return dataB;
+		}
+
+		public static string GetDesignTemperature(DataTypeB dataB)
+		{
+			var designTemp = "";
+			var dataAs = dataB.ValueB;
+			foreach (var datA in dataAs)
+			{
+				if (datA.ValueA.Contains("Temperature_"))
+				{
+					var attrString = datA.ValueA;
+					var pos = attrString.IndexOf("Temperature_");
+					designTemp = attrString.Substring(pos + "Temperature_".Length);
+
+				}
+			}
+
+			return designTemp;
+
+		}
+
+		public static string GetDesignPressure(DataTypeB dataB)
+		{
+			var designPress = "";
+			var dataAs = dataB.ValueB;
+			foreach (var datA in dataAs)
+			{
+				if (datA.ValueA.Contains("DesignPressure_"))
+				{
+					var attrString = datA.ValueA;
+					var pos = attrString.IndexOf("DesignPressure_");
+					designPress = attrString.Substring(pos + "DesignPressure_".Length);
+
+				}
+			}
+
+			return designPress;
+
+		}
+
+
+		public static string GetWallThickness(DataTypeB dataB)
+		{
+			var wallThickness = "";
+			var dataAs = dataB.ValueB;
+			foreach (var datA in dataAs)
+			{
+				if (datA.ValueA.Contains("WallThickness_"))
+				{
+					var attrString = datA.ValueA;
+					var pos = attrString.IndexOf("WallThickness_");
+					wallThickness = attrString.Substring(pos + "WallThickness_".Length);
+
+				}
+			}
+
+			return wallThickness;
+
+		}
+
+		public static string GetMaterial(DataTypeB dataB)
+		{
+			var material = "";
+			var dataAs = dataB.ValueB;
+			foreach (var datA in dataAs)
+			{
+				if (datA.ValueA.Contains("Material_"))
+				{
+					var attrString = datA.ValueA;
+					var pos = attrString.IndexOf("Material_");
+					material = attrString.Substring(pos + "Material_".Length);
+
+				}
+			}
+
+			return material;
+
+		}
+
+
 		// write a list<string> into a text file
 		public static void CreateTextFileFromStringList(List<string> stringList)
 		{
-
-			var filePath = @"C:\Users\sean7218\Documents\Visual Studio 2017\Projects\ConsoleApp1\ConsoleApp1\textfileOutput.txt";
+			string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+			var filePath = Path.Combine(baseDir, "textfileOutput3.txt");
+			//var filePath = @".\textfileOutput2.txt";
 			using (var writer = new StreamWriter(filePath))
 			{
 
-				writer.WriteLine("This is just a string writing to a text file");
+				writer.WriteLine("This is just a string writing to a text file by Sean");
 				foreach (var line in stringList)
 				{
 					writer.WriteLine(line);

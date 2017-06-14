@@ -62,21 +62,18 @@ namespace ConsoleApp1
 	}
 	class DataTypeA
 	{
-		public int Id { get; set; }
 		public string KeyA { get; set; }
 		public string ValueA { get; set; }
 	}
 
 	class DataTypeB
 	{
-		public int Id { get; set; }
 		public string KeyB { get; set; }
 		public List<DataTypeA> ValueB { get; set; }
 	}
 
 	class DataTypeC
 	{
-		public int Id { get; set; }
 		public string KeyC { get; set; }
 		public List<DataTypeB> ValueC { get; set; }
 
@@ -84,7 +81,6 @@ namespace ConsoleApp1
 
 	class DataTypeD
 	{
-		public int Id { get; set; }
 		public string KeyD { get; set; }
 		public List<DataTypeC> ValueD { get; set; }
 	}
